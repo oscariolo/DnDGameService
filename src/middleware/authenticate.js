@@ -4,23 +4,31 @@ import logger from '../utils/logger.js';
 /**
  * Middleware to authenticate HTTP requests
  * Validates JWT token from Authorization header
+ * Token validation happens implicitly when making requests to Spring Boot
  */
 const authenticateRequest = async (req, res, next) => {
   try {
     const token = AuthService.extractTokenFromHeaders(req.headers);
-    const userId = req.headers['x-user-id'];
 
-    if (!token || !userId) {
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Missing authentication credentials',
+        message: 'Missing or invalid Authorization header',
       });
     }
 
-    // Validate token with Spring Boot
-    const userData = await AuthService.validateToken(token);
+    // Extract user info from token (decode without validation)
+    const userData = AuthService.decodeTokenLocally(token);
+    
+    if (!userData) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid token format',
+      });
+    }
 
-    req.user = { ...userData, userId };
+    req.user = userData;
+    req.token = token; // Store token for downstream requests to Spring Boot
     next();
   } catch (error) {
     logger.error('Request authentication failed:', error.message);

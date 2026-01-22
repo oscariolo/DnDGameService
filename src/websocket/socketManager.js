@@ -52,8 +52,6 @@ class SocketManager {
         return;
       }
 
-      // Store user info in socket
-      socket.userId = userId;
       socket.gameSessionId = gameSessionId;
       socket.userData = userData;
 
