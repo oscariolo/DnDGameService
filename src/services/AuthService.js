@@ -9,7 +9,7 @@ class AuthService {
    * @param {string} token - JWT token
    * @returns {Object|null} - Decoded token data or null if invalid format
    */
-  decodeTokenLocally(token) {
+  decodeToken(token) {
     try {
       const parts = token.split('.');
       if (parts.length !== 3) {
@@ -38,7 +38,8 @@ class AuthService {
   async validateToken(token) {
     try {
       if (!token) {
-        throw new Error('Token is required');
+        logger.warn('Token validation: token is required');
+        return false;
       }
 
       const response = await axios.get(
@@ -52,13 +53,14 @@ class AuthService {
         }
       );
       if(response.status !== 200) {
+        logger.warn(`Token validation failed with status ${response.status}`);
         return false;
       }
       logger.debug('Token validated successfully');
       return true;
     } catch (error) {
-      logger.error('Token validation failed:', error.message);
-      throw new Error('Token validation failed');
+      logger.warn('Token validation failed:', error.message);
+      return false;
     }
   }
 
