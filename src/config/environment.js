@@ -12,7 +12,7 @@ const env = {
   MONGO_DB_NAME: process.env.MONGO_DB_NAME || 'dnd_game_service',
 
   // Spring Boot Backend
-  SPRINGBOOT_AUTH_URL: process.env.SPRINGBOOT_AUTH_URL || 'http://localhost:8080/api/auth/validate-token',
+  SPRINGBOOT_AUTH_URL: process.env.SPRINGBOOT_AUTH_URL || 'http://localhost:8080/api/auth',
   SPRINGBOOT_URL: process.env.SPRINGBOOT_URL || 'http://localhost:8080',
 
   // CORS

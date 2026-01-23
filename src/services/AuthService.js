@@ -41,20 +41,21 @@ class AuthService {
         throw new Error('Token is required');
       }
 
-      const response = await axios.post(
+      const response = await axios.get(
         env.SPRINGBOOT_AUTH_URL,
-        { token },
         {
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
           timeout: 5000,
         }
       );
-
+      if(response.status !== 200) {
+        return false;
+      }
       logger.debug('Token validated successfully');
-      return response.data;
+      return true;
     } catch (error) {
       logger.error('Token validation failed:', error.message);
       throw new Error('Token validation failed');

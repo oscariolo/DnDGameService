@@ -45,15 +45,20 @@ class SocketManager {
       const { token, userId, gameSessionId } = data;
 
       // Validate with Spring Boot
-      const userData = await AuthService.validateToken(token);
+      const isTokenValid = await AuthService.validateToken(token);
+      // Validate if game session exists
 
-      if (!userData) {
+      if (!isTokenValid) {
         socket.emit('auth-error', { message: 'Authentication failed' });
         return;
       }
 
+      if(!userId || !gameSessionId) {
+        socket.emit('auth-error', { message: 'Missing userId or gameSessionId' });
+        return;
+      }
+
       socket.gameSessionId = gameSessionId;
-      socket.userData = userData;
 
       // Store client info
       this.connectedClients.set(socket.id, {
@@ -88,37 +93,37 @@ class SocketManager {
 
     // Chat message event
     socket.on('chat-message', (data) => {
-      GameEventHandlers.handleChatMessage(socket, sessionId, data);
+      GameEventHandlers.handleChatMessage(socket, io, sessionId, data);
     });
 
     // Zone update event
     socket.on('zone-update', (data) => {
-      GameEventHandlers.handleZoneUpdate(socket, sessionId, data);
+      GameEventHandlers.handleZoneUpdate(socket, io, sessionId, data);
     });
 
     // Dice roll event
     socket.on('dice-roll', (data) => {
-      GameEventHandlers.handleDiceRoll(socket, sessionId, data);
+      GameEventHandlers.handleDiceRoll(socket, io, sessionId, data);
     });
 
     // Character update event
     socket.on('character-update', (data) => {
-      GameEventHandlers.handleCharacterUpdate(socket, sessionId, data);
+      GameEventHandlers.handleCharacterUpdate(socket, io, sessionId, data);
     });
 
     // Level up event
     socket.on('level-up', (data) => {
-      GameEventHandlers.handleLevelUp(socket, sessionId, data);
+      GameEventHandlers.handleLevelUp(socket, io, sessionId, data);
     });
 
     // Player join event (for joining mid-session)
     socket.on('player-join', (data) => {
-      GameEventHandlers.handlePlayerJoin(socket, sessionId, data.playerId);
+      GameEventHandlers.handlePlayerJoin(socket, io, sessionId, data.playerId);
     });
 
     // Player leave event
     socket.on('player-leave', () => {
-      GameEventHandlers.handlePlayerLeave(socket, sessionId, socket.userId);
+      GameEventHandlers.handlePlayerLeave(socket, io, sessionId, socket.userId);
     });
 
     // Get session state event
