@@ -21,7 +21,7 @@ class GameEventHandlers {
       }
 
       // Save to database
-      //await GameEventService.saveChatMessage(sessionId, senderId, messageContent);
+      await GameEventService.saveChatMessage(sessionId, senderId, messageContent);
 
       // Broadcast to all clients in the room (including sender)
       const eventData = {
@@ -107,7 +107,7 @@ class GameEventHandlers {
       const result = GameEventService.rollDice(expression);
 
       // Save to database
-      //await GameEventService.saveDiceRoll(sessionId, senderId, expression, result);
+      await GameEventService.saveDiceRoll(sessionId, senderId, expression, result);
 
       // Broadcast to all clients in the room (including sender)
       const eventData = {
