@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
 
-const ENVIRONMENT = process.env.NODE_ENV || 'development';
+const ENVIRONMENT = process.env.NODE_ENV || 'production';
 
 dotenv.config({
-  path: ENVIRONMENT === 'production' ? '.env.prod' : '.env.dev'
+  path: ENVIRONMENT === 'production' ? '.env' : '.env.dev'
 });
 
 const env = {
@@ -20,7 +20,7 @@ const env = {
     SPRINGBOOT_URL: process.env.SPRINGBOOT_URL || 'http://dndspringbackend:8080',
 
     // CORS
-    CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    CORS_ORIGIN: process.env.CORS_ORIGIN || 'localhost:3000',
 
     // WebSocket
     WS_PING_INTERVAL: parseInt(process.env.WS_PING_INTERVAL || '30000'),
