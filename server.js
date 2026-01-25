@@ -2,12 +2,12 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server as SocketIO } from 'socket.io';
 import cors from 'cors';
-import { connectDatabase } from './config/database.js';
-import { corsConfig, environment } from './config/index.js';
-import { errorHandlingMiddleware } from './middleware/index.js';
-import gameSessionRoutes from './controllers/gameSessionRoutes.js';
-import socketManager from './websocket/socketManager.js';
-import logger from './utils/logger.js';
+import { connectDatabase } from './src/config/database.js';
+import { corsConfig, environment } from './src/config/index.js';
+import { errorHandlingMiddleware } from './src/middleware/index.js';
+import gameSessionRoutes from './src/controllers/gameSessionRoutes.js';
+import socketManager from './src/websocket/socketManager.js';
+import logger from './src/utils/logger.js';
 
 const app = express();
 const httpServer = createServer(app);
