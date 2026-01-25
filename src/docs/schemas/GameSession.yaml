@@ -1,0 +1,24 @@
+type: object
+properties:
+  id:
+    type: string
+  baseCampaignId:
+    type: string
+  dungeonMasterId:
+    type: string
+  playerIds:
+    type: array
+    items:
+      type: string
+  currentZone:
+    type: string
+    nullable: true
+  status:
+    type: string
+    example: ACTIVE
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

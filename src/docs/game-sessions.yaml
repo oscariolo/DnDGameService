@@ -1,0 +1,272 @@
+/api/game-sessions:
+  post:
+    summary: Create a new game session
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [baseCampaignId, dungeonMasterId]
+            properties:
+              baseCampaignId:
+                type: string
+              dungeonMasterId:
+                type: string
+              playerIds:
+                type: array
+                items:
+                  type: string
+              currentZone:
+                type: string
+                nullable: true
+    responses:
+      201:
+        description: Game session created
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: ./schemas/ApiResponse.yaml
+                - properties:
+                    data:
+                      $ref: ./schemas/GameSession.yaml
+      400:
+        description: Missing required fields
+      500:
+        description: Server error
+
+  get:
+    summary: Get all active game sessions
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    responses:
+      200:
+        description: Active sessions
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: ./schemas/ApiResponse.yaml
+                - properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: ./schemas/GameSession.yaml
+/api/game-sessions/{sessionId}:
+  get:
+    summary: Get game session by ID
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: sessionId
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Game session found
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: ./schemas/ApiResponse.yaml
+                - properties:
+                    data:
+                      $ref: ./schemas/GameSession.yaml
+      404:
+        description: Session not found
+
+  put:
+    summary: Update game session
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: sessionId
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: true
+    responses:
+      200:
+        description: Game session updated
+
+  delete:
+    summary: End game session
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: sessionId
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Game session ended
+/api/game-sessions/dm/{dmId}:
+  get:
+    summary: Get sessions by Dungeon Master
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: dmId
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Sessions for DM
+/api/game-sessions/player/{playerId}:
+  get:
+    summary: Get sessions by Player
+    tags: [Game Sessions]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: playerId
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Sessions for player
+/api/game-sessions/{sessionId}/players:
+  post:
+    summary: Add player to session
+    tags: [Players]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: sessionId
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [playerId]
+            properties:
+              playerId:
+                type: string
+    responses:
+      200:
+        description: Player added
+      400:
+        description: Missing playerId
+/api/game-sessions/{sessionId}/players/{playerId}:
+  delete:
+    summary: Remove player from session
+    tags: [Players]
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: playerId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: Player removed
+/api/game-sessions/{sessionId}/events:
+  get:
+    summary: Get session events
+    tags: [Events]
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        schema:
+          type: string
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+    responses:
+      200:
+        description: Session events
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: ./schemas/ApiResponse.yaml
+                - properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: ./schemas/GameEvent.yaml
+/api/game-sessions/{sessionId}/messages:
+  get:
+    summary: Get chat messages
+    tags: [Chat]
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+    responses:
+      200:
+        description: Chat messages
+/api/game-sessions/{sessionId}/rolls:
+  get:
+    summary: Get dice roll history
+    tags: [Dice Rolls]
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: sessionId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 50
+    responses:
+      200:
+        description: Dice rolls

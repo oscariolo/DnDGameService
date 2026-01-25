@@ -2,12 +2,19 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server as SocketIO } from 'socket.io';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 import { connectDatabase } from './src/config/database.js';
 import { corsConfig, environment } from './src/config/index.js';
 import { errorHandlingMiddleware } from './src/middleware/index.js';
 import gameSessionRoutes from './src/controllers/gameSessionRoutes.js';
 import socketManager from './src/websocket/socketManager.js';
 import logger from './src/utils/logger.js';
+import YAML from 'yamljs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+
 
 const app = express();
 const httpServer = createServer(app);
@@ -17,6 +24,24 @@ const io = new SocketIO(httpServer, {
   pingInterval: environment.WS_PING_INTERVAL,
   pingTimeout: environment.WS_PING_TIMEOUT,
 });
+
+// ============== Swagger Configuration ==============
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const swaggerDocument = YAML.load(
+  path.join(__dirname, 'src/docs/swagger.yaml')
+);
+
+const gameSessionsPaths = YAML.load(
+  path.join(__dirname, 'src/docs/game-sessions.yaml')
+);
+// Merge paths
+swaggerDocument.paths = {
+  ...swaggerDocument.paths,
+  ...gameSessionsPaths,
+};
+
 
 // ============== Middleware ==============
 app.use(cors(corsConfig));
@@ -31,6 +56,9 @@ app.get('/health', (req, res) => {
     timestamp: new Date(),
   });
 });
+
+// ============== Swagger Documentation ==============
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ============== API Routes ==============
 app.use('/api/game-sessions', gameSessionRoutes);
