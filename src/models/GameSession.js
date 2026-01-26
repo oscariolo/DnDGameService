@@ -32,8 +32,8 @@ const gameSessionSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'paused', 'ended'],
-      default: 'active',
+      enum: ['waiting', 'active', 'paused', 'ended'],
+      default: 'waiting',
     },
     startedAt: {
       type: Date,

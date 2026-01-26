@@ -24,6 +24,18 @@ class GameSessionController {
         playerIds: playerIds || [],
         currentZone: currentZone || null,
       });
+      try {
+        const backendUrl = process.env.DNDBACKEND_URL || 'http://dndbackend:8080';
+        const axios = await import('axios').then(m => m.default || m);
+        await axios.post(`${backendUrl}/api/campaigns/game`, {
+          gameId: session._id || session.id || session.id,
+          baseCampaignId: baseCampaignId,
+          dungeonMasterId: dungeonMasterId,
+          playerIds: playerIds || [],
+        }, { timeout: 3000 });
+      } catch (err) {
+        logger.warn('Failed to create CampaignRun in backend:', err && err.message ? err.message : err);
+      }
 
       res.status(201).json({
         success: true,
