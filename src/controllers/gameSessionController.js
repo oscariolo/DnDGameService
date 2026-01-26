@@ -9,7 +9,7 @@ class GameSessionController {
    */
   async createGameSession(req, res) {
     try {
-      const { baseCampaignId, dungeonMasterId, playerIds, currentZone } = req.body;
+      const { baseCampaignId, dungeonMasterId, playerIds, currentZone, status } = req.body;
 
       if (!baseCampaignId || !dungeonMasterId) {
         return res.status(400).json({
@@ -23,6 +23,7 @@ class GameSessionController {
         dungeonMasterId,
         playerIds: playerIds || [],
         currentZone: currentZone || null,
+        status: status,
       });
       try {
         const backendUrl = process.env.DNDBACKEND_URL || 'http://dndbackend:8080';

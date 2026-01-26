@@ -17,6 +17,7 @@ class GameSessionService {
         gameState: sessionData.gameState || {},
         playersProgress: sessionData.playersProgress || {},
         availableCharacters: sessionData.availableCharacters || {},
+        status: sessionData.status,
       });
 
       await session.save();
